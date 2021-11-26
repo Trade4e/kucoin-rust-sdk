@@ -1,8 +1,16 @@
 [package]
 name = "kucoin-rust-sdk"
 version = "0.1.0"
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+reqwest = { version = "0.11.6", features = ["json"] }
+tokio = { version = "1.14.0", features = ["full"] }
+hmac = "0.11.0"
+base64 = "0.13.0"
+sha2 = "0.9.8"
+serde = "1.0.130"
+serde_json = "1.0.72"
+serde_derive = "1.0.130"

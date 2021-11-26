@@ -1,5 +1,13 @@
+
+pub extern crate serde;
+pub extern crate serde_json;
+
+#[macro_use]
+pub extern crate serde_derive;
+
 pub mod utils;
 pub mod client;
+pub mod others;
 
 #[cfg(test)]
 mod tests {
