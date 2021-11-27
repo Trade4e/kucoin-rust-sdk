@@ -5,8 +5,13 @@ pub extern crate serde_json;
 #[macro_use]
 pub extern crate serde_derive;
 
+#[macro_use]
+pub extern crate thiserror;
+
+pub mod error;
 pub mod utils;
 pub mod client;
+pub mod market;
 pub mod others;
 
 #[cfg(test)]
