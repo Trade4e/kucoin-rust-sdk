@@ -1,7 +1,10 @@
 use crate::client::{BaseUrl, Environment};
 use crate::error::APIError;
 
-// Types
+/*
+@todo
+Add full aggregated order book function it's requires api  "General" key permission
+*/
 
 type Symbol = Option<String>;
 type Name = String;
@@ -111,6 +114,20 @@ struct Tickers {
     time: TimeStampData,
     ticker: Vec<Ticker>
 }
+#[derive(Debug , PartialOrd, PartialEq, Serialize, Deserialize)]
+struct Bids(Vec<Vec<(String)>>);
+
+#[derive(Debug , PartialOrd, PartialEq, Serialize, Deserialize)]
+struct Asks(Vec<Vec<(String)>>);
+
+#[derive(Debug , PartialOrd, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Level2 {
+    time: TimeStampData,
+    sequence: Sequence,
+    bids: Bids,
+    asks: Asks
+}
 
 #[derive(Debug, PartialOrd, PartialEq, Serialize, Deserialize)]
 struct Response<T> {
@@ -164,11 +181,45 @@ impl Market {
         let resp = self.client.get(url).send().await?.json().await?;
         Ok(resp)
     }
+
+    async fn get_orderbook_level2_20(&self, sym:Symbol) -> Result<Response<Level2>, APIError>{
+        let url = match sym {
+            Some(T) =>  format!("{}/api/v1/market/orderbook/level2_20?symbol={}", self.base_url.value(), T),
+            None => format!("{}/api/v1/market/orderbook/level2_20?symbol=BTC-USDT", self.base_url.value())
+        };
+        let resp = self.client.get(url).send().await?.json().await?;
+        Ok(resp)
+    }
+
+    async fn get_orderbook_level2_100(&self, sym:Symbol) -> Result<Response<Level2>, APIError>{
+        let url = match sym {
+            Some(T) =>  format!("{}/api/v1/market/orderbook/level2_100?symbol={}", self.base_url.value(), T),
+            None => format!("{}/api/v1/market/orderbook/level2_100?symbol=BTC-USDT", self.base_url.value())
+        };
+        let resp = self.client.get(url).send().await?.json().await?;
+        Ok(resp)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn test_get_orderbook_level2_100() {
+        let market = Market::create(Environment::Live);
+        let orderbook = market.get_orderbook_level2_100(Symbol::None).await;
+        println!("{:#?}", orderbook);
+        //assert!(symbols.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_get_orderbook_level2_20() {
+        let market = Market::create(Environment::Live);
+        let orderbook = market.get_orderbook_level2_20(Symbol::None).await;
+        println!("{:#?}", orderbook);
+        //assert!(symbols.is_ok());
+    }
 
     #[tokio::test]
     async fn test_get_markets() {
